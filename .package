@@ -1,0 +1,5 @@
+NAME="kids.cache"
+DESCRIPTION="Kids caching library."
+EMAIL="valentin.lab@kalysto.org"
+AUTHOR="Valentin LAB"
+AUTHOR_EMAIL="$AUTHOR <$EMAIL>"
