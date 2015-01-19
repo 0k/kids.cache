@@ -2,8 +2,11 @@
 
 import threading
 import functools
+import collections
 
-import cachetools
+
+CacheInfo = collections.namedtuple(
+    'CacheInfo', 'type hits misses maxsize currsize')
 
 
 ## inspired by cachetools.decorators.cachedfunc
@@ -25,7 +28,7 @@ def make_key_hippie(obj, typed=True):
     ftype = type if typed else lambda o: None
     try:
         return hash(obj), ftype(obj)
-    except Exception:
+    except Exception:  ## pylint: disable-msg=W0703
         pass
     if isinstance(obj, (list, tuple, set)):
         return tuple(make_key_hippie(e, typed) for e in obj)
@@ -81,8 +84,8 @@ def cachedfunc(cache_store, key=make_key_hippie):
                 hits, misses = stats
                 maxsize = getattr(cache_store, "maxsize", None)
                 currsize = getattr(cache_store, "currsize", None)
-            return cachetools.decorators.CacheInfo(
-                hits, misses, maxsize, currsize)
+            return CacheInfo(
+                type(cache_store).__name__, hits, misses, maxsize, currsize)
 
         def cache_clear():
             with context:

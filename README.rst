@@ -412,7 +412,7 @@ received a ``cache_info`` method::
     2
 
     >>> mysum.cache_info()
-    CacheInfo(hits=1, misses=1, maxsize=None, currsize=None)
+    CacheInfo(type='dict', hits=1, misses=1, maxsize=None, currsize=None)
 
 
 Cache Store

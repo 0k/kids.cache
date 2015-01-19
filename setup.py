@@ -57,6 +57,6 @@ setup(
     setup_requires=['d2to1'],
     ## XXXvlab: declaring this will break pip install
     # namespace_packages=['kids'],
-    extras_require={'test': ['nose', ]},
+    extras_require={'test': ['nose', 'cachetools']},
     d2to1=True
 )
