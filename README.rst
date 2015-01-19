@@ -490,3 +490,14 @@ it'll take less time if you follow the following guidelines:
 If you have some questions about guidelines which is not answered here,
 please check the current ``git log``, you might find previous commit that
 would show you how to deal with your issue.
+
+
+License
+=======
+
+Copyright (c) 2015 Valentin Lab.
+
+Licensed under the `BSD License`_.
+
+.. _BSD License: http://raw.github.com/0k/kids.cache/master/LICENSE
+
