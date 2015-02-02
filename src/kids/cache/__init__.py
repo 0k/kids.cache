@@ -9,7 +9,6 @@ CacheInfo = collections.namedtuple(
     'CacheInfo', 'type hits misses maxsize currsize')
 
 
-## inspired by cachetools.decorators.cachedfunc
 def make_key(obj, typed=True):
     args, kwargs = obj
     key = (tuple(args), tuple(sorted(kwargs.items())))
@@ -22,7 +21,9 @@ def make_key(obj, typed=True):
 def make_key_hippie(obj, typed=True):
     """Return hashable structure from non-hashable structure using hippie means
 
-    dict and list are sorted and their content subjected to same hippie means.
+    dict and set are sorted and their content subjected to same hippie means.
+
+    Note that the key identifies the current content of the structure.
 
     """
     ftype = type if typed else lambda o: None
@@ -42,6 +43,16 @@ def make_key_hippie(obj, typed=True):
 
 
 def hashing(typed=True, strict=False):
+    """Returns a typed and/or strict key callable.
+
+    A strict key callable will fail on traditionaly non-hashable object,
+    while a strict=False hashing will use hippie hashing that can hash
+    mutable object.
+
+    A typed key callable will use type of each object in the hash and will
+    distinguish with same hash but different type (example: 2 and 2.0).
+
+    """
     hashable_struct_producer = make_key if strict else make_key_hippie
 
     def _make_key(*args, **kwargs):
@@ -103,6 +114,12 @@ def cachedfunc(cache_store, key=make_key_hippie):
 
 
 def cache(*args, **kwargs):
+    """The @cache decorator
+
+    Compatility with using ``@cache()`` and ``@cache`` is managed in
+    the current function.
+
+    """
     ## only one argument ?
     if len(args) == 1 and len(kwargs) == 0 and \
            (callable(args[0]) or isinstance(args[0], property)):
