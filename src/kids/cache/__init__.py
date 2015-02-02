@@ -31,7 +31,11 @@ def make_key_hippie(obj, typed=True):
         return hash(obj), ftype(obj)
     except Exception:  ## pylint: disable-msg=W0703
         pass
-    if isinstance(obj, (list, tuple, set)):
+    ## should we try to convert to frozen{set,dict} to get the C
+    ## hashing function speed ? But the convertion has a cost also.
+    if isinstance(obj, set):
+        obj = sorted(obj)
+    if isinstance(obj, (list, tuple)):
         return tuple(make_key_hippie(e, typed) for e in obj)
     if isinstance(obj, dict):
         return tuple(sorted(((make_key_hippie(k, typed),
