@@ -100,7 +100,7 @@ def cachedfunc(cache_store, key=make_key_hippie):
             with context:
                 hits, misses = stats
                 maxsize = getattr(cache_store, "maxsize", None)
-                currsize = getattr(cache_store, "currsize", None)
+                currsize = getattr(cache_store, "currsize", len(cache_store))
             return CacheInfo(
                 type(cache_store).__name__, hits, misses, maxsize, currsize)
 
