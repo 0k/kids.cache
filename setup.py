@@ -21,7 +21,8 @@ except ImportError:
 ##
 
 if "%%short-version%%".startswith("%%"):
-    import os.path, sys
+    import os.path
+    import sys
     if not os.path.exists('./autogen.sh'):
         sys.stderr.write(
             "This source repository was not configured.\n"
@@ -37,13 +38,13 @@ if "%%short-version%%".startswith("%%"):
         sys.exit(1)
     sys.stderr.write("Missing version information: "
                      "running './autogen.sh'...\n")
-    import os, subprocess
+    import os
+    import subprocess
     os.system('./autogen.sh > .autogen.sh.output')
     cmdline = sys.argv[:]
-    if cmdline[1] == "install":
+    if cmdline[0] == "-c":
         ## XXXvlab: for some reason, this is needed when launched from pip
-        if cmdline[0] == "-c":
-            cmdline[0] = "setup.py"
+        cmdline[0] = "setup.py"
     errlvl = subprocess.call(["python", ] + cmdline)
     os.unlink(".autogen.sh.output")
     sys.exit(errlvl)
@@ -55,8 +56,6 @@ if "%%short-version%%".startswith("%%"):
 
 setup(
     setup_requires=['d2to1'],
-    ## XXXvlab: declaring this will break pip install
-    # namespace_packages=['kids'],
     extras_require={'test': ['nose', 'cachetools']},
     d2to1=True
 )
