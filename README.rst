@@ -372,8 +372,9 @@ A good key function can:
 Cleaning Cache
 --------------
 
-``kids.cache`` uses some ``cachetools`` ideas, and each function cached
-received a ``cache_clear`` method::
+``kids.cache`` uses some ``lru_cache`` ideas of python 3
+implementation, and each function cached received a ``cache_clear``
+method::
 
     >>> @cache
     ... def mysum(*args):
@@ -397,8 +398,9 @@ By calling ``cache_clear`` method, we flush all previous cached value::
 Cache stats
 -----------
 
-``kids.cache`` uses some ``cachetools`` ideas, and each function cached
-received a ``cache_info`` method::
+``kids.cache`` uses some ``lru_cache`` ideas of python 3
+implementation, and each function cached received a ``cache_info``
+method::
 
     >>> @cache
     ... def mysum(*args):

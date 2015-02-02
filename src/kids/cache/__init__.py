@@ -94,6 +94,8 @@ def cachedfunc(cache_store, key=make_key_hippie):
                     pass  # value too large
             return result
 
+        ## mimic's python3 ``lru_cache`` facilities.
+
         def cache_info():
             with context:
                 hits, misses = stats
