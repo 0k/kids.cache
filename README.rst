@@ -371,7 +371,7 @@ wanted, heh ?)::
     8
 
 Huh oh. This is not what was probably expected in this example, but
-you really had to work had to make this happen. And most of the time,
+you really had to work hard to make this happen. And most of the time,
 you'll probably find this convenient and will use it at you advantage.
 It's a little bit like an extension of the ``key`` mecanism that is
 the objects responsability.
