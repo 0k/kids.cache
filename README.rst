@@ -316,7 +316,73 @@ This allows you to use the function with list, dict or combination of these::
     >>> mylength([3, 2, 1])
     3
 
-But ``hippie_hashing`` will probably fail on special object::
+Even your objects could be used as key, as long as they are hashable::
+
+    >>> class MyObj(object):  ## object subclasses have a default hash
+    ...     length = 5
+    ...     def __len__(self, ):
+    ...         print('calculating...')
+    ...         return self.length
+
+    >>> myobj = MyObj()
+    >>> mylength(myobj)
+    calculating...
+    5
+
+    >>> mylength(myobj)
+    5
+
+Be assured that hash collision (they happen!) won't generate cache collisions::
+
+    >>> class MyCollidingHashObj(MyObj):
+    ...     def __init__(self, length):
+    ...          self.length = length
+    ...     def __hash__(self):
+    ...          return 1
+
+    >>> hash_collide1 = MyCollidingHashObj(6)
+    >>> hash_collide2 = MyCollidingHashObj(7)
+
+    >>> mylength(hash_collide1)
+    calculating...
+    6
+    >>> mylength(hash_collide2)
+    calculating...
+    7
+
+But try to avoid them for performance's sake !! And you should
+probably be aware that if your object compare equal, then THERE WILL
+BE a cache collision (but at this point, this is probably what you
+wanted, heh ?)::
+
+    >>> class MyEqCollidingHashObj(MyCollidingHashObj):
+    ...     def __eq__(self, value):
+    ...          return True
+    ...     def __hash__(self):
+    ...          return 1
+
+    >>> eq_and_hash_collide1 = MyEqCollidingHashObj(8)
+    >>> eq_and_hash_collide2 = MyEqCollidingHashObj(9)
+
+    >>> mylength(eq_and_hash_collide1)
+    calculating...
+    8
+    >>> mylength(eq_and_hash_collide2)
+    8
+
+Huh oh. This is not what was probably expected in this example, but
+you really had to work had to make this happen. And most of the time,
+you'll probably find this convenient and will use it at you advantage.
+It's a little bit like an extension of the ``key`` mecanism that is
+the objects responsability.
+
+.. note:: Please verify also that if your object compares the same, their
+  hash HAS TO BE the same. For this very reason, in Python3, when you
+  define the ``__eq__`` method, it'll remove the default ``__hash__``
+  from objects.
+
+
+Of course, ``hippie_hashing`` will fail on special unhashable object::
 
     >>> class Unhashable(object):
     ...    def __hash__(self):

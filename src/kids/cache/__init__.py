@@ -18,6 +18,14 @@ def make_key(obj, typed=True):
     return key
 
 
+def is_hashable(obj):
+    try:
+        hash(obj)
+        return True
+    except Exception:  ## pylint: disable-msg=W0703
+        return False
+
+
 def make_key_hippie(obj, typed=True):
     """Return hashable structure from non-hashable structure using hippie means
 
@@ -27,10 +35,10 @@ def make_key_hippie(obj, typed=True):
 
     """
     ftype = type if typed else lambda o: None
-    try:
-        return hash(obj), ftype(obj)
-    except Exception:  ## pylint: disable-msg=W0703
-        pass
+    if is_hashable(obj):
+        ## DO NOT RETURN hash(obj), as hash collision would generate bad
+        ## cache collisions.
+        return obj, ftype(obj)
     ## should we try to convert to frozen{set,dict} to get the C
     ## hashing function speed ? But the convertion has a cost also.
     if isinstance(obj, set):
