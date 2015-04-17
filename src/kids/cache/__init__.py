@@ -73,6 +73,12 @@ def hashing(typed=True, strict=False):
     return _make_key
 
 
+SUPPORTED_DECORATOR = {
+    property: lambda f: f.fget,
+    classmethod: lambda f: f.__func__,
+    staticmethod: lambda f: f.__func__,
+}
+
 ## inspired by cachetools.decorators.cachedfunc
 def cachedfunc(cache_store, key=make_key_hippie):
     context = threading.RLock()  ## stats lock
@@ -81,13 +87,11 @@ def cachedfunc(cache_store, key=make_key_hippie):
         stats = [0, 0]
 
         orig_call_wrapper = False
-        if isinstance(func, property):
-            func = func.fget
-            orig_call_wrapper = property
-
-        if isinstance(func, classmethod):
-            func = func.__func__
-            orig_call_wrapper = classmethod
+        for call_wrapper, unwrap in SUPPORTED_DECORATOR.items():
+            if isinstance(func, call_wrapper):
+                func = unwrap(func)
+                orig_call_wrapper = call_wrapper
+                break
 
         def wrapper(*args, **kwargs):
             k = key(*args, **kwargs)
@@ -141,7 +145,7 @@ def cache(*args, **kwargs):
     ## only one argument ?
     if len(args) == 1 and len(kwargs) == 0 and \
            (callable(args[0]) or \
-            isinstance(args[0], (property, classmethod))):
+            isinstance(args[0], tuple(SUPPORTED_DECORATOR.keys()))):
         return _cache_w_args(args[0])
     return lambda f: _cache_w_args(f, *args, **kwargs)
 

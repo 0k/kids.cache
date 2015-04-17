@@ -240,6 +240,42 @@ decorator::
     >>> WithClassMethod.total()
     7
 
+staticmethod
+------------
+
+You can use the ``cache`` decorator with staticmethods::
+
+    >>> class WithStaticMethod(MyObject):
+    ...
+    ...    @staticmethod
+    ...    @cache
+    ...    def total(a, b):
+    ...        print("evaluating...")
+    ...        return a + b
+
+    >>> WithStaticMethod.total(1, 3)
+    evaluating...
+    4
+    >>> WithStaticMethod.total(1, 3)
+    4
+
+You can use ``@cache`` decorator before or after ``@property``
+decorator::
+
+    >>> class WithStaticMethod(MyObject):
+    ...
+    ...    @cache
+    ...    @staticmethod
+    ...    def total(a, b):
+    ...        print("evaluating...")
+    ...        return a + b
+
+    >>> WithStaticMethod.total(2, 6)
+    evaluating...
+    8
+    >>> WithStaticMethod.total(2, 6)
+    8
+
 
 
 Advanced Usage
