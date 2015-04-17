@@ -277,6 +277,127 @@ decorator::
     8
 
 
+class
+-----
+
+Using ``cache`` with classes will allow variations around the 
+notion of singletons. A singleton shares the same id in memory,
+so this shows a classical non-singleton behavior::
+
+    >>> a, b = object(), object()
+    >>> id(a) == id(b)
+    False
+
+
+Factory based singleton
+'''''''''''''''''''''''
+
+You can use the ``cache`` decorator with classes, effectively
+implementing a factory pattern for creating singleton::
+
+    >>> @cache
+    ... class MySingleton(MyObject):
+    ...     def __new__(cls):
+    ...         print("instanciating...")
+    ...         return MyObject.__new__(cls)
+    ...     def __init__(self):
+    ...         print("initializing...")
+
+    >>> a, b = MySingleton(), MySingleton()
+    instanciating...
+    initializing...
+    >>> id(a) == id(b)
+    True
+
+Notice that both instance are the same object, so it was only
+instanciated and initialized once.
+
+But be warned: this is not anymore a class::
+
+    >>> MySingleton
+    <function MySingleton at ...>
+
+
+Instanciation based singletons
+''''''''''''''''''''''''''''''
+
+Slightly different, the class singleton pattern can be achieved by
+caching ``__new__``::
+
+    >>> class MySingleton(MyObject):
+    ...     @cache
+    ...     def __new__(cls):
+    ...         print("instanciating...")
+    ...         return MyObject.__new__(cls)
+    ...     def __init__(self):
+    ...         print("initializing...")
+
+    >>> a, b = MySingleton(), MySingleton()
+    instanciating...
+    initializing...
+    initializing...
+    >>> id(a) == id(b)
+    True
+
+Notice that both instance are the same object, so it was only
+instanciated once. But the ``__init__`` was called both times.
+This is sometimes perfectly valid, but you might want to avoid this
+also.
+
+So if you don't want this, you should cache also ``__init__`` method::
+
+    >>> class MySingleton(MyObject):
+    ...     @cache
+    ...     def __new__(cls):
+    ...         print("instanciating...")
+    ...         return MyObject.__new__(cls)
+    ...     @cache
+    ...     def __init__(self):
+    ...         print("initializing...")
+
+    >>> a, b = MySingleton(), MySingleton()
+    instanciating...
+    initializing...
+    >>> id(a) == id(b)
+    True
+
+For both cases you'll keep your full object untouched of course::
+
+    >>> MySingleton
+    <class 'MySingleton'>
+
+
+Singleton with arguments
+''''''''''''''''''''''''
+
+Actually, these are only singletons if you call them successively with
+the same arguments.
+
+Or to be more precise, you can share your classes when their
+instanciation's arguments are the same::
+
+    >>> @cache
+    ... class MySingleton(MyObject):
+    ...     def __init__(self, a):
+    ...         self.a = a
+    ...         print("evaluating...")
+
+    >>> a, b = MySingleton(1), MySingleton(2)
+    evaluating...
+    evaluating...
+    >>> id(a) == id(b)
+    False
+
+But::
+
+    >>> c = MySingleton(1)
+    >>> id(a) == id(c)
+    True
+
+If you want a singleton that give you the same instance even if your
+successive calls differs, you should check the advanced usage section
+and the ``key`` argument.
+
 
 Advanced Usage
 ==============
