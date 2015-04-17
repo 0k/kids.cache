@@ -80,10 +80,14 @@ def cachedfunc(cache_store, key=make_key_hippie):
     def decorator(func):
         stats = [0, 0]
 
-        prop = False
+        orig_call_wrapper = False
         if isinstance(func, property):
             func = func.fget
-            prop = True
+            orig_call_wrapper = property
+
+        if isinstance(func, classmethod):
+            func = func.__func__
+            orig_call_wrapper = classmethod
 
         def wrapper(*args, **kwargs):
             k = key(*args, **kwargs)
@@ -120,8 +124,8 @@ def cachedfunc(cache_store, key=make_key_hippie):
         wrapper.cache_clear = cache_clear
 
         wrapper = functools.update_wrapper(wrapper, func)
-        if prop:
-            wrapper = property(wrapper)
+        if orig_call_wrapper:
+            wrapper = orig_call_wrapper(wrapper)
         return wrapper
 
     return decorator
@@ -136,7 +140,8 @@ def cache(*args, **kwargs):
     """
     ## only one argument ?
     if len(args) == 1 and len(kwargs) == 0 and \
-           (callable(args[0]) or isinstance(args[0], property)):
+           (callable(args[0]) or \
+            isinstance(args[0], (property, classmethod))):
         return _cache_w_args(args[0])
     return lambda f: _cache_w_args(f, *args, **kwargs)
 

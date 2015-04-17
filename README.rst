@@ -197,6 +197,50 @@ decorator::
     >>> xx.total
     4
 
+classmethod
+-----------
+
+You can use the ``cache`` decorator with classmethods, and
+provides a good way to share cache between instances::
+
+    >>> class WithClassMethod(MyObject):
+    ...
+    ...    a = 2
+    ...    b = 3
+    ...
+    ...    @classmethod
+    ...    @cache
+    ...    def total(cls):
+    ...        print("evaluating...")
+    ...        return cls.a + cls.b
+
+    >>> WithClassMethod.total()
+    evaluating...
+    5
+    >>> WithClassMethod.total()
+    5
+
+You can use ``@cache`` decorator before or after ``@property``
+decorator::
+
+    >>> class WithClassMethod(MyObject):
+    ...
+    ...    a = 1
+    ...    b = 6
+    ...
+    ...    @cache
+    ...    @classmethod
+    ...    def total(cls):
+    ...        print("evaluating...")
+    ...        return cls.a + cls.b
+
+    >>> WithClassMethod.total()
+    evaluating...
+    7
+    >>> WithClassMethod.total()
+    7
+
+
 
 Advanced Usage
 ==============
