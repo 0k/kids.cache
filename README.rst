@@ -450,8 +450,8 @@ fine tune when the cache should be recalculated.
 
 ``hashing`` functions will receive exactly the same arguments than the
 main function called. It must return an hashable structure
-(combination of ``tuples``, ``int``, ``string``... avoid list and
-dicts). This will identify uniquely the result.
+(combination of ``tuples``, ``int``, ``string``... avoid list, dicts and
+sets). This will identify uniquely the result.
 
 For example you could::
 
@@ -528,7 +528,7 @@ the default value for the key argument::
 
 This allows you to use the function with list, dict or combination of these::
 
-    >>> mylength([3, 2, 1])
+    >>> mylength([set([3]), 2, {1: 2}])
     3
 
 Even your objects could be used as key, as long as they are hashable::
@@ -621,7 +621,7 @@ arguments::
 
 But then, don't be surprised if it fails with dict, list, or set arguments::
 
-    >>> mylength([3, 2, 1])
+    >>> mylength([set([3]), 2, {1: 2}])
     Traceback (most recent call last):
     ...
     TypeError: unhashable type: 'list'

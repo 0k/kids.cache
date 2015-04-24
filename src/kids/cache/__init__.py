@@ -79,6 +79,17 @@ SUPPORTED_DECORATOR = {
     staticmethod: lambda f: f.__func__,
 }
 
+def undecorate(func):
+    """Returns the decorator and the undecorated function of given object."""
+    orig_call_wrapper = lambda x: x
+    for call_wrapper, unwrap in SUPPORTED_DECORATOR.items():
+        if isinstance(func, call_wrapper):
+            func = unwrap(func)
+            orig_call_wrapper = call_wrapper
+            break
+    return orig_call_wrapper, func
+
+
 ## inspired by cachetools.decorators.cachedfunc
 def cachedfunc(cache_store, key=make_key_hippie):
     context = threading.RLock()  ## stats lock
@@ -86,14 +97,10 @@ def cachedfunc(cache_store, key=make_key_hippie):
     def decorator(func):
         stats = [0, 0]
 
-        orig_call_wrapper = False
-        for call_wrapper, unwrap in SUPPORTED_DECORATOR.items():
-            if isinstance(func, call_wrapper):
-                func = unwrap(func)
-                orig_call_wrapper = call_wrapper
-                break
+        wrapper, wrapped = undecorate(func)
 
-        def wrapper(*args, **kwargs):
+        @functools.wraps(wrapped)
+        def _cache_wrapper(*args, **kwargs):
             k = key(*args, **kwargs)
             with context:
                 try:
@@ -102,12 +109,13 @@ def cachedfunc(cache_store, key=make_key_hippie):
                     return result
                 except KeyError:
                     stats[1] += 1
-            result = func(*args, **kwargs)
+            result = wrapped(*args, **kwargs)
             with context:
                 try:
                     cache_store[k] = result
                 except ValueError:
-                    pass  # value too large
+                    ## Value 'too large', only casted with cachetools stores.
+                    pass
             return result
 
         ## mimic's python3 ``lru_cache`` facilities.
@@ -124,13 +132,10 @@ def cachedfunc(cache_store, key=make_key_hippie):
             with context:
                 cache_store.clear()
 
-        wrapper.cache_info = cache_info
-        wrapper.cache_clear = cache_clear
+        _cache_wrapper.cache_info = cache_info
+        _cache_wrapper.cache_clear = cache_clear
 
-        wrapper = functools.update_wrapper(wrapper, func)
-        if orig_call_wrapper:
-            wrapper = orig_call_wrapper(wrapper)
-        return wrapper
+        return wrapper(_cache_wrapper)
 
     return decorator
 
