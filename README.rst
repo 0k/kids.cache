@@ -23,14 +23,18 @@ kids.cache
 ``kids.cache`` is a Python library providing a cache decorator.
 It's part of 'Kids' (for Keep It Dead Simple) library.
 
-It main concern is to offer a very simple default usage.
-Without forgetting to offer power inside when needed.
+It main concern is to offer a very simple default usage,
+without forgetting to offer full power inside when needed.
+
 
 
 Maturity
 ========
 
-This code is in alpha stage.
+This code is around ~100 lines of python, and it has a 100% test
+coverage.
+
+However it still considered beta stage currently.
 
 
 Compatibility
@@ -42,27 +46,33 @@ This code is tested for compatibility with python 2.7 and python >= 3 .
 Features
 ========
 
-using ``kids.cache``:
-
 - Use one simple call to ``@cache``, and a majority of all hidden complexity
   will vanish.
 
-  - works out of the box on function, methods, property.
-  - support to be called before or after @property.
+  - works out of the box everywhere you can stick a decorator
+    (function, methods, property, classes...).
+  - support to be called before or after common decorators as
+    ``@property``, ``@classmethod``, ``@staticmethod``.
 
-- Or go deeper into customization:
+- With ``@cache`` several design pattern can be achieved:
 
-  - cache clearing functionality
-  - cache stats
-  - support of any cache store mecanism from `cachetools`_ package
+  - *memoization* when used on function with arguments.
+  - *lazy evaluation* when placed on properties.
+  - *singleton* patterns when placed on classes.
+
+- Full customization at disposition:
+
+  - cache clearing or cache stats functionality.
+  - support of any cache store mecanism from `cachetools`_ package.
   - support of custom key function which allows:
 
     - support of your exotic unhashable objects
-    - fine tune what function calls should be considered identic
+    - fine tune which function calls can be considered identic
     - hand pick function dependencies in object (for method)
 
 
 .. _cachetools: https://github.com/tkem/cachetools
+
 
 Basic Usage
 ===========
@@ -471,12 +481,16 @@ Without bothering to recalculate when other values change::
     >>> xx.total()
     8
 
-But it should make a difference between instances::
+But it should still make a difference between instances::
 
     >>> yy = WithKey(2, 3)
     >>> yy.total()
     calculating...
     5
+
+This last example is important as you could have wanted to share the
+cache between all instances. You could have done this easily by
+avoiding returning ``id(s)`` in the ``key`` function.
 
 
 Typed key functions
@@ -497,11 +511,11 @@ You could ask for ``typed`` argument to NOT be treated the same::
     2.0
 
 
-Key functions
--------------
+default key functions
+---------------------
 
 The default key function if not provided is a bold try to make ``list``
-and ``dict`` also keyable despite these not being hashable.
+and ``dict``, ``set`` also keyable despite these not being hashable.
 
 The name of the key function is called ``hippie_hashing``, and this is
 the default value for the key argument::
@@ -595,7 +609,7 @@ Of course, ``hippie_hashing`` will fail on special unhashable object::
     ValueError: <Unhashable ...> can not be hashed. Try providing a custom key function.
 
 If you are not a hippie, you should consider using ``strict=True`` and a
-much more limited by sober method will be used to make a key from your
+much more limited method will be used to make a key from your
 arguments::
 
     >>> @cache(strict=True)
@@ -631,7 +645,8 @@ A good key function can:
 
 - make some cache timeout (but you should then look at cache store
   section to limit the size of the cache)
-- finely select which argument are pertinent to the method.
+- finely select which argument are pertinent to the method to avoid
+  re-evaluating the function when it is non-necessary.
 - allow you to cache callables that have very special arguments that
   can't be hashed properly.
 
@@ -692,7 +707,14 @@ means you can provide some more clever cache stores. For example, you
 can use ``cachetools`` caches under the hood to manage the caching store.
 
 Keep in mind that the default cache store is... a dict ! which is not
-a good idea if your program will run for a long time.
+a good idea if your program will run for a long time and you have
+cached function calls that will be different throughout the running
+time: the cache store will then grow for each new call making the
+memory usage of your process grow... perhaps out of bounds.
+
+In these scenario, you must think about using managed cache stores that
+will clean and remove old unused cache entries. There are many cache
+store provided in ``cachetools`` and ``kids.cache`` supports them all.
 
 So if you need any caching store from ``cachetools`` you can provide
 it::
