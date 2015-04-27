@@ -21,9 +21,10 @@ kids.cache
 
 
 ``kids.cache`` is a Python library providing a cache decorator.
-It's part of 'Kids' (for Keep It Dead Simple) library.
+It's part of 'Kids' (for Keep It Dead Simple) library. It has
+no dependency to any python library.
 
-It main concern is to offer a very simple default usage,
+Its main concern is to offer a very simple default usage scheme,
 without forgetting to offer full power inside when needed.
 
 
