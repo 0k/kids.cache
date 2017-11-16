@@ -1,4 +1,2 @@
-include *.rst
-#recursive-include docs/source/ *
-recursive-include src/ *
-#prune docs/build/
+graft src
+include *.rst LICENSE

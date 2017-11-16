@@ -41,7 +41,17 @@ However it still considered beta stage currently.
 Compatibility
 =============
 
-This code is tested for compatibility with python 2.7 and python >= 3 .
+
+It is small and simple and should work anywhere.
+
+To put it in longer details: the current code is simple enough that it
+use a common subset of python that is compatible with any platform on
+python 2.7 and python >= 3... and this without any specific
+modification.
+
+Even then, You'll be happy to know that, this code is tested for
+compatibility at each commit with python 2.7, 3.4, 3.5, 3.6 on linux
+and windows platform.
 
 
 Features
@@ -787,7 +797,7 @@ would show you how to deal with your issue.
 License
 =======
 
-Copyright (c) 2015 Valentin Lab.
+Copyright (c) 2017 Valentin Lab.
 
 Licensed under the `BSD License`_.
 
