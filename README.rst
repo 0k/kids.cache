@@ -311,7 +311,7 @@ so this shows a classical non-singleton behavior::
 
 
 Factory based singleton
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use the ``cache`` decorator with classes, effectively
 implementing a factory pattern for creating singleton::
@@ -340,7 +340,7 @@ But be warned: this is not anymore a class::
 
 
 Instanciation based singletons
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Slightly different, the class singleton pattern can be achieved by
 caching ``__new__``::
@@ -389,7 +389,7 @@ For both cases you'll keep your full object untouched of course::
 
 
 Singleton with arguments
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Actually, these are only singletons if you call them successively with
 the same arguments.
