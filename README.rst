@@ -24,7 +24,7 @@ kids.cache
 It's part of 'Kids' (for Keep It Dead Simple) library. It has
 no dependency to any python library.
 
-Its main concern is to offer a very simple default usage scheme,
+It's main concern is to offer a very simple default usage scheme,
 without forgetting to offer full power inside when needed.
 
 
@@ -35,7 +35,7 @@ Maturity
 This code is around ~100 lines of python, and it has a 100% test
 coverage.
 
-However it still considered beta stage currently.
+However it is still considered to be in beta stage currently.
 
 
 Compatibility
@@ -44,14 +44,14 @@ Compatibility
 
 It is small and simple and should work anywhere.
 
-To put it in longer details: the current code is simple enough that it
-use a common subset of python that is compatible with any platform on
+To put it in greater detail: the current code is simple enough that it
+uses a common subset of python that is compatible with any platform on
 python 2.7 and python >= 3... and this without any specific
 modification.
 
-Even then, You'll be happy to know that, this code is tested for
+Even then, you'll be happy to know that, this code is tested for
 compatibility at each commit with python 2.7, 3.4, 3.5, 3.6 on linux
-and windows platform.
+and windows platforms.
 
 
 Features
@@ -65,9 +65,9 @@ Features
   - support to be called before or after common decorators as
     ``@property``, ``@classmethod``, ``@staticmethod``.
 
-- With ``@cache`` several design pattern can be achieved:
+- With ``@cache`` several design patterns can be achieved:
 
-  - *memoization* when used on function with arguments.
+  - *memoization* when used on functions with arguments.
   - *lazy evaluation* when placed on properties.
   - *singleton* patterns when placed on classes.
 
@@ -97,15 +97,15 @@ This cache decorator is quite straightforward to use::
 
     >>> @cache
     ... def answer_to_everything():
-    ...     print("many insightfull calculation")
+    ...     print("many insightful calculations")
     ...     return 42
 
 Then the function ``answer_to_everything`` would only do the
 calculation the first time called, and would save the result, and
-directly return it the next calls::
+directly return it in subsequent calls::
 
     >>> answer_to_everything()
-    many insightfull calculation
+    many insightful calculations
     42
 
     >>> answer_to_everything()
@@ -132,12 +132,12 @@ It'll work with arguments::
     >>> mysum(1, 1, 1, 1)
     4
 
-And notice that by default, object are not typed, thus::
+And notice that by default, objects are not typed, thus::
 
     >>> mysum(1.0, 1, 1, 1)
     4
 
-Did trigger the cache, despite the first argument is a float and not
+Trigger jhe cache, despite the first argument being a float and not
 an integer.
 
 
@@ -200,7 +200,7 @@ provides a good way to have lazy evaluated attributes::
     >>> xx.total
     2
 
-You can use ``@cache`` decorator before or after ``@property``
+You can use the ``@cache`` decorator before or after the ``@property``
 decorator::
 
     >>> class WithProperty(MyObject):
@@ -241,7 +241,7 @@ provides a good way to share cache between instances::
     >>> WithClassMethod.total()
     5
 
-You can use ``@cache`` decorator before or after ``@property``
+You can use the ``@cache`` decorator before or after the ``@property``
 decorator::
 
     >>> class WithClassMethod(MyObject):
@@ -330,10 +330,10 @@ implementing a factory pattern for creating singleton::
     >>> id(a) == id(b)
     True
 
-Notice that both instance are the same object, so it was only
+Notice that both instances are the same object, so it was only
 instanciated and initialized once.
 
-But be warned: this is not anymore a class::
+But be warned: this is not a class anymore::
 
     >>> MySingleton
     <function MySingleton at ...>
@@ -415,8 +415,8 @@ But::
     >>> id(a) == id(c)
     True
 
-If you want a singleton that give you the same instance even if your
-successive calls differs, you should check the advanced usage section
+If you want a singleton that gives you the same instance even if your
+successive calls differ, you should check the advanced usage section
 and the ``key`` argument.
 
 
@@ -459,10 +459,10 @@ Provide a key function
 Providing a key function can be extremely powerfull and will allow to
 fine tune when the cache should be recalculated.
 
-``hashing`` functions will receive exactly the same arguments than the
-main function called. It must return an hashable structure
+``hashing`` functions will receive exactly the same arguments as the
+main function called. It must return a hashable structure
 (combination of ``tuples``, ``int``, ``string``... avoid list, dicts and
-sets). This will identify uniquely the result.
+sets). This will uniquely identify the result.
 
 For example you could::
 
@@ -499,7 +499,7 @@ But it should still make a difference between instances::
     calculating...
     5
 
-This last example is important as you could have wanted to share the
+This last example is important as you might have wanted to share the
 cache between all instances. You could have done this easily by
 avoiding returning ``id(s)`` in the ``key`` function.
 
@@ -576,10 +576,10 @@ Be assured that hash collision (they happen!) won't generate cache collisions::
     calculating...
     7
 
-But try to avoid them for performance's sake !! And you should
+But try to avoid them for performance's sake!! And you should
 probably be aware that if your object compare equal, then THERE WILL
 BE a cache collision (but at this point, this is probably what you
-wanted, heh ?)::
+wanted, heh?)::
 
     >>> class MyEqCollidingHashObj(MyCollidingHashObj):
     ...     def __eq__(self, value):
@@ -598,9 +598,9 @@ wanted, heh ?)::
 
 Huh oh. This is not what was probably expected in this example, but
 you really had to work hard to make this happen. And most of the time,
-you'll probably find this convenient and will use it at you advantage.
+you'll probably find this convenient and will use it to your advantage.
 It's a little bit like an extension of the ``key`` mecanism that is
-the objects responsability.
+the objects responsibility.
 
 .. note:: Please verify also that if your object compares the same, their
   hash HAS TO BE the same. For this very reason, in Python3, when you
@@ -666,7 +666,7 @@ Cleaning Cache
 --------------
 
 ``kids.cache`` uses some ``lru_cache`` ideas of python 3
-implementation, and each function cached received a ``cache_clear``
+implementation, and each function that is cached received a ``cache_clear``
 method::
 
     >>> @cache
@@ -680,7 +680,7 @@ method::
     >>> mysum(1,1)
     2
 
-By calling ``cache_clear`` method, we flush all previous cached value::
+By calling the ``cache_clear`` method, we flush all previous cached value::
 
     >>> mysum.cache_clear()
     >>> mysum(1,1)
@@ -692,7 +692,7 @@ Cache stats
 -----------
 
 ``kids.cache`` uses some ``lru_cache`` ideas of python 3
-implementation, and each function cached received a ``cache_info``
+implementation, and each function that is cached received a ``cache_info``
 method::
 
     >>> @cache
@@ -765,7 +765,7 @@ But we still have this one in memory::
 Contributing
 ============
 
-Any suggestion or issue is welcome. Push request are very welcome,
+Any suggestions or issues are welcome. Push requests are very welcome,
 please check out the guidelines.
 
 
@@ -790,8 +790,8 @@ it'll take less time if you follow the following guidelines:
   feature, please mention it in the summary.
 
 If you have some questions about guidelines which is not answered here,
-please check the current ``git log``, you might find previous commit that
-would show you how to deal with your issue.
+please check the current ``git log``, you might find a previous commit that
+shows you how to deal with your issue.
 
 
 License
